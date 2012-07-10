@@ -1,0 +1,101 @@
+<!--
+  Copyright (c) 2012 - All Rights Reserved
+  
+  The author(s) and owner(s) of this work are hereby declaring All Rights Reserved and that the information contained in this document is privileged 
+  and confidential and intended only for the use of the individual(s) and/or entity(ies) named on the title of this document. Any unauthorized disclosure, 
+  copying, distribution or taking of any action in reliance on the contents of this document’s materials is strictly prohibited. The review of this material 
+  by any individual other than the intended recipient(s) shall not constitute voluntary disclosure of the information. If you have received this document
+  in error, please immediately notify the owner.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Project information -->
+    <groupId>com.don4of4</groupId>
+    <artifactId>ObsidianEco</artifactId>
+    <version>${m.version}-${p.version}</version>
+    <name>ObsidianEco</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.number>Unknown</build.number>
+        <m.version>1.2.5</m.version>
+        <p.version>R0.5</p.version>
+    </properties>
+
+    <!-- Source code -->
+    <scm>
+        <developerConnection>scm:git:git@github.com:don4of4/${project.name}.git</developerConnection>
+        <connection>scm:git:git://github.com/don4of4/${project.name}.git</connection>
+        <url>https://github.com/don4of4/${project.name}</url>
+    </scm>
+
+    <!-- Continuous integration -->
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://ci.mdev.in/job/${project.name}</url>
+    </ciManagement>
+
+    <!-- Repository locations -->
+    <repositories>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+	    <repository>
+	        <id>sk89q-repo</id>
+	        <url>http://maven.sk89q.com/repo/</url>
+	    </repository>
+    </repositories>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- Plugins -->
+        <plugins>
+            <!-- Compile plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <!-- JAR creation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+        	<groupId>org.bukkit</groupId>
+        	<artifactId>craftbukkit</artifactId>
+            <version>1.2.5-R4.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>

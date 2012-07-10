@@ -35,7 +35,8 @@ public final class DbUtils {
      */
     public static void close(Connection conn) throws SQLException {
         if (conn != null) {
-            conn.close();
+            //TODO Hacky fix
+        	//conn.close();
         }
     }
 

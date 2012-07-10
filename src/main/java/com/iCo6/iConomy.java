@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.Locale;
 
-import com.nijikokun.bukkit.Permissions.Permissions;
-
 import com.iCo6.Constants.Drivers;
 import com.iCo6.command.Handler;
 import com.iCo6.command.Parser;
@@ -47,7 +45,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import org.h2.jdbcx.JdbcConnectionPool;
 
 /**
  * iConomy by Team iCo
@@ -75,7 +72,6 @@ public class iConomy extends JavaPlugin {
 
     private static Accounts Accounts = new Accounts();
     public Parser Commands = new Parser();
-    public Permissions Permissions;
     private boolean testedPermissions = false;
 
     public static boolean TerminalSupport = false;
@@ -85,7 +81,6 @@ public class iConomy extends JavaPlugin {
     public static Template Template;
     public static Timer Interest;
 
-    private JdbcConnectionPool h2pool;
 
     public void onEnable() {
         final long startTime = System.nanoTime();
@@ -99,7 +94,7 @@ public class iConomy extends JavaPlugin {
             Server = getServer();
 
             if(getServer().getServerName().equalsIgnoreCase("craftbukkit")) {
-                TerminalSupport = ((CraftServer)getServer()).getReader().getTerminal().isANSISupported();
+                TerminalSupport = ((CraftServer)getServer()).getReader().getTerminal().isAnsiSupported();
             }
 
             // Get general plugin information
@@ -130,7 +125,7 @@ public class iConomy extends JavaPlugin {
             }
             
             // Check Drivers if needed
-            Type type = Database.getType(Constants.Nodes.DatabaseType.toString());
+           /* Type type = Database.getType(Constants.Nodes.DatabaseType.toString());
             if(!(type.equals(Type.InventoryDB) || type.equals(Type.MiniDB))) {
                 Drivers driver = null;
                 
@@ -147,7 +142,7 @@ public class iConomy extends JavaPlugin {
                         wget.fetch(driver.getUrl(), driver.getFilename());
                         System.out.println("[iConomy] Finished Downloading.");
                     }
-            }
+            }*/
 
             // Setup Commands
             Commands.add("/money +name", new Money(this));
@@ -212,7 +207,7 @@ public class iConomy extends JavaPlugin {
 
                 // Check to see if it's a binary database, if so, check the database existance
                 // If it doesn't exist, Create one.
-                if(Database.isSQL()) {
+                if(Database.isSQL()) {//FIXME needs to be redone
                     if(!Database.tableExists(Constants.Nodes.DatabaseTable.toString())) {
                         String SQL = Common.resourceToString("SQL/Core/Create-Table-" + Database.getType().toString().toLowerCase() + ".sql");
                         SQL = String.format(SQL, Constants.Nodes.DatabaseTable.getValue());
@@ -226,7 +221,7 @@ public class iConomy extends JavaPlugin {
                             } catch (SQLException ex) {
                                 System.out.println("[iConomy] Error creating database: " + ex);
                             } finally {
-                                DbUtils.close(c);
+                                //DbUtils.close(c);
                             }
                         } catch (SQLException ex) {
                             System.out.println("[iConomy] Database Error: " + ex);
@@ -434,36 +429,15 @@ public class iConomy extends JavaPlugin {
 
                 if(node == null)
                     return true;
-
-                if(this.Permissions == null)
-                    if(!this.testedPermissions) {
-                        Plugin Perms = Server.getPluginManager().getPlugin("Permissions");
-                        
-                        if (Perms != null) {
-                            if (Perms.isEnabled()) {
-                                this.Permissions = ((Permissions)Perms);
-                                System.out.println("[iConomy] hooked into Permissions.");
-                            }
-                        }
-
-                        this.testedPermissions = true;
-                    }
-                
-                if(this.Permissions != null) {
-                    if(Permissions.Security.permission(player, node) || Permissions.Security.permission(player, node.toLowerCase()))
+     
+                try {
+                    Permission perm = new Permission(node);
+                    if(player.hasPermission(perm) || player.hasPermission(node) || player.hasPermission(node.toLowerCase()))
                         return true;
 
                     return false;
-                } else {
-                    try {
-                        Permission perm = new Permission(node);
-                        if(player.hasPermission(perm) || player.hasPermission(node) || player.hasPermission(node.toLowerCase()))
-                            return true;
-
-                        return false;
-                    } catch(Exception e) {
-                        return player.isOp();
-                    }
+                } catch(Exception e) {
+                    return player.isOp();
                 }
             }
         }

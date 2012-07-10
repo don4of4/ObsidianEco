@@ -25,6 +25,7 @@ public class Database {
     private String driver;
     private String url;
     private String username, password;
+    private static Connection connection;
 
     public Database(String type, String url, String username, String password) throws MissingDriver {
         this.type = type;
@@ -61,7 +62,11 @@ public class Database {
     }
 
     public Connection getConnection() throws SQLException {
-        return (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager.getConnection(url, username, password);
+    	if (connection == null || connection.isClosed()){
+    		connection = (username.isEmpty() && password.isEmpty()) ? DriverManager.getConnection(url) : DriverManager.getConnection(url, username, password);
+    	}
+    	
+    	return connection;
     }
     
     ResultSetHandler<Boolean> returnBoolean = new ResultSetHandler<Boolean>() {
@@ -87,7 +92,7 @@ public class Database {
                 String t = Constants.Nodes.DatabaseTable.toString();
                 exists = run.query(conn, "SELECT id FROM " + table, returnBoolean);
             }  finally {
-                DbUtils.close(conn);
+                //DbUtils.close(conn);
             }
         } catch (SQLException e) {
             exists = false;
